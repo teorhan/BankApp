@@ -40,7 +40,7 @@ public class LoginController {
             ResultSet rs = stmt.executeQuery();
 
             if (rs.next()) {
-                openDashboard();
+                openDashboard(tc); // TC bilgisini gönder
             } else {
                 errorLabel.setText("Hatalı TC veya şifre.");
             }
@@ -51,13 +51,19 @@ public class LoginController {
         }
     }
 
-    private void openDashboard() {
+    private void openDashboard(String tc) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/dashboard.fxml"));
             Scene scene = new Scene(loader.load());
+
+            // Controller'a TC bilgisini aktar
+            DashboardController controller = loader.getController();
+            controller.setUserTc(tc);
+
             Stage stage = (Stage) usernameField.getScene().getWindow();
             stage.setScene(scene);
             stage.setTitle("FidanBank Dashboard");
+
         } catch (Exception e) {
             e.printStackTrace();
         }

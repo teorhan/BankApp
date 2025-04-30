@@ -6,37 +6,28 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox spacing="20" alignment="CENTER"
-      style="-fx-background-color: #1B5E20;"
-      xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="DashboardController">
+<VBox alignment="CENTER" prefHeight="531.0" prefWidth="612.0" spacing="20" style="-fx-background-color: #1B5E20;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="DashboardController">
 
     <padding>
-        <Insets top="30" right="40" bottom="30" left="40"/>
+        <Insets bottom="30" left="40" right="40" top="30" />
     </padding>
 
     <!-- Hoşgeldiniz Başlığı -->
-    <Label text="FidanBank Ana Sayfa" textAlignment="CENTER"
-           style="-fx-font-size: 32px; -fx-text-fill: white; -fx-font-weight: bold;" />
+    <Label style="-fx-font-size: 32px; -fx-text-fill: white; -fx-font-weight: bold;" text="FidanBank Ana Sayfa" textAlignment="CENTER" />
 
     <!-- Bakiye Başlığı -->
-    <Label text="Mevcut Bakiyeniz:" textAlignment="CENTER"
-           style="-fx-font-size: 18px; -fx-text-fill: white;" />
+    <Label style="-fx-font-size: 18px; -fx-text-fill: white;" text="Mevcut Bakiyeniz:" textAlignment="CENTER" />
 
     <!-- Bakiye Değeri -->
-    <Label fx:id="balanceLabel" text="₺0"
-           style="-fx-font-size: 24px; -fx-text-fill: #C8E6C9; -fx-font-weight: bold;" />
+    <Label fx:id="balanceLabel" style="-fx-font-size: 24px; -fx-text-fill: #C8E6C9; -fx-font-weight: bold;" text="₺0" />
 
     <!-- Para Yatır / Çek Butonları -->
-    <HBox spacing="20" alignment="CENTER">
-        <Button text="Para Yatır" onAction="#handleDeposit"
-                style="-fx-background-color: white; -fx-text-fill: #1B5E20; -fx-font-size: 14px; -fx-background-radius: 10; -fx-cursor: hand; -fx-padding: 8 16;"/>
-        <Button text="Para Çek" onAction="#handleWithdraw"
-                style="-fx-background-color: white; -fx-text-fill: #1B5E20; -fx-font-size: 14px; -fx-background-radius: 10; -fx-cursor: hand; -fx-padding: 8 16;"/>
+    <HBox alignment="CENTER" spacing="20">
+        <Button onAction="#handleDeposit" style="-fx-background-color: white; -fx-text-fill: #1B5E20; -fx-font-size: 14px; -fx-background-radius: 10; -fx-cursor: hand; -fx-padding: 8 16;" text="Para Yatır" />
+        <Button onAction="#handleWithdraw" style="-fx-background-color: white; -fx-text-fill: #1B5E20; -fx-font-size: 14px; -fx-background-radius: 10; -fx-cursor: hand; -fx-padding: 8 16;" text="Para Çek" />
     </HBox>
 
     <!-- Çıkış Butonu -->
-    <Button text="Çıkış Yap" onAction="#handleLogout"
-            style="-fx-background-color: transparent; -fx-text-fill: white; -fx-underline: true; -fx-font-size: 14px; -fx-cursor: hand;"/>
+    <Button onAction="#handleLogout" style="-fx-background-color: transparent; -fx-text-fill: white; -fx-underline: true; -fx-font-size: 14px; -fx-cursor: hand;" text="Çıkış Yap" />
 
 </VBox>
