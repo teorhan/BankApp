@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox alignment="CENTER" spacing="15" prefWidth="500" prefHeight="400"
+      style="-fx-background-color: #1B5E20;"
+      xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml"
+      fx:controller="RegisterController">
+
+    <padding>
+        <Insets top="30" right="40" bottom="30" left="40"/>
+    </padding>
+
+    <Label text="Yeni Hesap Oluştur" style="-fx-font-size: 28px; -fx-text-fill: white; -fx-font-weight: bold;" />
+
+    <TextField fx:id="tcField" promptText="TC Kimlik No"
+               style="-fx-background-radius: 8; -fx-background-color: white; -fx-font-size: 14px; -fx-padding: 8;" />
+
+    <PasswordField fx:id="passwordField" promptText="Şifre"
+                   style="-fx-background-radius: 8; -fx-background-color: white; -fx-font-size: 14px; -fx-padding: 8;" />
+
+    <Button text="Kaydol" onAction="#handleRegister"
+            style="-fx-background-color: white; -fx-text-fill: #1B5E20; -fx-font-size: 14px; -fx-background-radius: 8; -fx-cursor: hand; -fx-padding: 8 16;" />
+
+    <Button text="Giriş Ekranına Dön" onAction="#handleGoBack"
+            style="-fx-background-color: transparent; -fx-text-fill: white; -fx-underline: true; -fx-font-size: 12px; -fx-cursor: hand;" />
+
+    <Label fx:id="infoLabel" textFill="yellow" style="-fx-font-size: 12px;" />
+
+</VBox>

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<VBox alignment="CENTER" prefHeight="550.0" prefWidth="504.0" spacing="15"
+      style="-fx-background-color: #1B5E20;"
+      xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="LoginController">
+
+    <padding>
+        <Insets bottom="30" left="40" right="40" top="30" />
+    </padding>
+
+    <!-- Logo -->
+    <ImageView fitHeight="80.0" fitWidth="80.0" pickOnBounds="true" preserveRatio="true">
+        <image>
+            <Image url="@/images/fidan.png" />
+        </image>
+    </ImageView>
+
+    <!-- Ana Başlık -->
+    <Label text="FidanBank" textAlignment="CENTER"
+           style="-fx-font-size: 40px; -fx-text-fill: white; -fx-font-weight: bold;" />
+
+    <!-- Hoşgeldiniz Mesajı -->
+    <Label text="Hoşgeldiniz, lütfen giriş yapınız."
+           style="-fx-font-size: 16px; -fx-text-fill: white;" />
+
+    <!-- Kullanıcı Adı Alanı -->
+    <TextField fx:id="usernameField" promptText="Kullanıcı Adı"
+               style="-fx-background-radius: 8; -fx-border-radius: 8; -fx-background-color: white; -fx-font-size: 14px; -fx-padding: 8;" />
+
+    <!-- Şifre Alanı -->
+    <PasswordField fx:id="passwordField" promptText="Şifre"
+                   style="-fx-background-radius: 8; -fx-border-radius: 8; -fx-background-color: white; -fx-font-size: 14px; -fx-padding: 8;" />
+
+    <!-- Giriş Yap Butonu -->
+    <Button text="Giriş Yap" onAction="#handleLogin"
+            style="-fx-background-color: white; -fx-text-fill: #1B5E20; -fx-font-size: 14px; -fx-background-radius: 8; -fx-cursor: hand; -fx-padding: 8 16;" />
+
+    <!-- Şifremi Unuttum Butonu -->
+    <Button text="Şifremi Unuttum" onAction="#handleForgotPassword"
+            style="-fx-background-color: transparent; -fx-text-fill: white; -fx-underline: true; -fx-font-size: 12px; -fx-cursor: hand;" />
+
+    <!-- HESAP OLUŞTUR Butonu -->
+    <Button text="Hesap Oluştur" onAction="#handleGoToRegister"
+            style="-fx-background-color: transparent; -fx-text-fill: white; -fx-underline: true; -fx-font-size: 12px; -fx-cursor: hand;" />
+
+    <!-- Hata Mesajı -->
+    <Label fx:id="errorLabel" textFill="red" style="-fx-font-size: 12px;" />
+
+</VBox>

@@ -1,0 +1,83 @@
+import javafx.fxml.FXML;
+import javafx.scene.control.Label;
+import javafx.scene.control.PasswordField;
+import javafx.scene.control.TextField;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
+import javafx.fxml.FXMLLoader;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+
+public class LoginController {
+
+    @FXML
+    private TextField usernameField;
+    @FXML
+    private PasswordField passwordField;
+    @FXML
+    private Label errorLabel;
+
+    @FXML
+    private void handleLogin() {
+        String tc = usernameField.getText().trim();
+        String password = passwordField.getText().trim();
+
+        if (tc.isEmpty() || password.isEmpty()) {
+            errorLabel.setText("TC ve şifre boş olamaz.");
+            return;
+        }
+
+        String sql = "SELECT * FROM users WHERE tc = ? AND password = ?";
+
+        try (Connection conn = DatabaseHelper.connect();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, tc);
+            stmt.setString(2, password);
+
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                openDashboard();
+            } else {
+                errorLabel.setText("Hatalı TC veya şifre.");
+            }
+
+        } catch (Exception e) {
+            errorLabel.setText("Bağlantı hatası: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    private void openDashboard() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/dashboard.fxml"));
+            Scene scene = new Scene(loader.load());
+            Stage stage = (Stage) usernameField.getScene().getWindow();
+            stage.setScene(scene);
+            stage.setTitle("FidanBank Dashboard");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
+    private void handleForgotPassword() {
+        errorLabel.setText("Şifre sıfırlama için banka ile iletişime geçiniz.");
+    }
+
+    @FXML
+    private void handleGoToRegister() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/register.fxml"));
+            Scene scene = new Scene(loader.load());
+            Stage stage = (Stage) usernameField.getScene().getWindow();
+            stage.setScene(scene);
+            stage.setTitle("FidanBank - Hesap Oluştur");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}
