@@ -69,6 +69,38 @@ public class DatabaseHelper {
             e.printStackTrace();
         }
     }
+    public static void createTransactionsTable() {
+        String sql = "CREATE TABLE IF NOT EXISTS transactions ("
+                + "id INTEGER PRIMARY KEY AUTOINCREMENT,"
+                + "tc TEXT NOT NULL,"
+                + "type TEXT NOT NULL,"
+                + "amount REAL NOT NULL,"
+                + "target_tc TEXT,"
+                + "timestamp DATETIME DEFAULT CURRENT_TIMESTAMP"
+                + ");";
+
+        try (Connection conn = connect();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.execute();
+            System.out.println("✅ Transaction tablosu oluşturuldu veya zaten mevcut.");
+        } catch (SQLException e) {
+            System.out.println("❌ Transaction tablosu oluşturulamadı: " + e.getMessage());
+        }
+    }
+    public static void logTransaction(String tc, String type, double amount, String targetTc) {
+        String sql = "INSERT INTO transactions(tc, type, amount, target_tc) VALUES (?, ?, ?, ?)";
+        try (Connection conn = connect();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, tc);
+            ps.setString(2, type);
+            ps.setDouble(3, amount);
+            ps.setString(4, targetTc);
+            ps.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 
 
 }

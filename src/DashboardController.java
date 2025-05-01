@@ -13,7 +13,6 @@ public class DashboardController {
     @FXML
     private TextField amountField;
 
-    private Customer currentCustomer;
     @FXML
     private TextField targetTcField;
 
@@ -23,6 +22,7 @@ public class DashboardController {
     @FXML
     private Label transferInfoLabel;
 
+    private Customer currentCustomer;
 
     public void setUserTc(String tc) {
         this.currentCustomer = new Customer(tc, null);
@@ -76,6 +76,7 @@ public class DashboardController {
             e.printStackTrace();
         }
     }
+
     @FXML
     private void handleTransfer() {
         String targetTc = targetTcField.getText().trim();
@@ -100,15 +101,11 @@ public class DashboardController {
                 return;
             }
 
-            // 🔍 Alıcı TC veritabanında var mı kontrol et
+            // Alıcı TC kontrolü
             double targetBalance = DatabaseHelper.getBalance(targetTc);
-            if (targetBalance == 0.0) {
-                // Ancak alıcı gerçekten 0 TL'ye sahipse bu yanıltıcı olur.
-                // O yüzden ayrıca kayıtlı mı kontrol edelim:
-                if (!DatabaseHelper.userExists(targetTc)) {
-                    transferInfoLabel.setText("Alıcı TC bulunamadı!");
-                    return;
-                }
+            if (targetBalance == 0.0 && !DatabaseHelper.userExists(targetTc)) {
+                transferInfoLabel.setText("Alıcı TC bulunamadı!");
+                return;
             }
 
             if (currentBalance < amount) {
@@ -116,9 +113,13 @@ public class DashboardController {
                 return;
             }
 
-            // ✅ Para transferi işlemi
+            // Para transferi
             DatabaseHelper.updateBalance(currentCustomer.getTc(), currentBalance - amount);
             DatabaseHelper.updateBalance(targetTc, targetBalance + amount);
+
+            // ✅ İşlem geçmişine ekle
+            DatabaseHelper.logTransaction(currentCustomer.getTc(), "Transfer (gönderici)", amount, targetTc);
+            DatabaseHelper.logTransaction(targetTc, "Transfer (alıcı)", amount, currentCustomer.getTc());
 
             transferInfoLabel.setText("Transfer başarılı!");
             updateBalanceLabel();
@@ -128,6 +129,23 @@ public class DashboardController {
         }
     }
 
+    @FXML
+    private void handleShowHistory() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/history.fxml"));
+            Scene scene = new Scene(loader.load());
+
+            HistoryController controller = loader.getController();
+            controller.setTc(currentCustomer.getTc());
+
+            Stage stage = new Stage();
+            stage.setTitle("İşlem Geçmişi");
+            stage.setScene(scene);
+            stage.show();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     private void updateBalanceLabel() {
         double balance = DatabaseHelper.getBalance(currentCustomer.getTc());

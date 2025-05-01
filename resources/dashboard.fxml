@@ -38,6 +38,10 @@
                     style="-fx-background-color: white; -fx-text-fill: #1B5E20; -fx-font-size: 14px; -fx-background-radius: 10;" />
         </HBox>
 
+        <Button text="İşlem Geçmişi" onAction="#handleShowHistory"
+                style="-fx-background-color: white; -fx-text-fill: #1B5E20; -fx-font-size: 14px;" />
+
+
         <Button text="Çıkış Yap" onAction="#handleLogout"
                 style="-fx-background-color: transparent; -fx-text-fill: white; -fx-underline: true; -fx-font-size: 14px;" />
     </VBox>

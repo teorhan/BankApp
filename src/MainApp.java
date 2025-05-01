@@ -17,6 +17,8 @@ public class MainApp extends Application {
     public static void main(String[] args) {
         // ADIM 4 — Veritabanı tablosunu uygulama başlamadan önce oluştur
         DatabaseHelper.createUsersTable();
+        DatabaseHelper.createTransactionsTable(); // users tablosunun altına ekle
+
 
         launch(args); // JavaFX uygulamasını başlat
     }
