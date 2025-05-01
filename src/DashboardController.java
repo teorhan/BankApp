@@ -9,36 +9,29 @@ public class DashboardController {
     @FXML
     private Label balanceLabel;
 
-    private String userTc; // Giriş yapan kişinin TC’si
-    private double balance;
+    private Customer currentCustomer;
 
+    // Kullanıcı TC’sini alıp Customer nesnesi oluşturur
     public void setUserTc(String tc) {
-        this.userTc = tc;
-        this.balance = DatabaseHelper.getBalance(tc); // Veritabanından bakiye çek
+        this.currentCustomer = new Customer(tc, null); // Şifre burada gerekmediği için null
         updateBalanceLabel();
     }
 
     @FXML
     private void initialize() {
-        // setUserTc() çağrılmadan önce initialize çalıştığı için burada işlem yapılmaz
+        // initialize içinde işlem yapılmaz çünkü setUserTc() sonradan çağrılıyor
     }
 
     @FXML
     private void handleDeposit() {
-        balance += 100;
-        DatabaseHelper.updateBalance(userTc, balance);
+        currentCustomer.deposit(100); // Customer sınıfındaki işlem çağrılır
         updateBalanceLabel();
     }
 
     @FXML
     private void handleWithdraw() {
-        if (balance >= 100) {
-            balance -= 100;
-            DatabaseHelper.updateBalance(userTc, balance);
-            updateBalanceLabel();
-        } else {
-            System.out.println("Yetersiz bakiye!");
-        }
+        currentCustomer.withdraw(100); // Customer sınıfındaki işlem çağrılır
+        updateBalanceLabel();
     }
 
     @FXML
@@ -54,7 +47,9 @@ public class DashboardController {
         }
     }
 
+    // Güncel bakiyeyi ekranda gösterir
     private void updateBalanceLabel() {
+        double balance = DatabaseHelper.getBalance(currentCustomer.getTc());
         balanceLabel.setText("₺" + balance);
     }
 }
