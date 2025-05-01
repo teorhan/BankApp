@@ -31,6 +31,19 @@ public class DatabaseHelper {
             System.out.println("❌ Tablo oluşturulamadı: " + e.getMessage());
         }
     }
+
+    public static boolean userExists(String tc) {
+        try (Connection conn = connect();
+             PreparedStatement ps = conn.prepareStatement("SELECT 1 FROM users WHERE tc = ?")) {
+            ps.setString(1, tc);
+            ResultSet rs = ps.executeQuery();
+            return rs.next(); // Eğer satır varsa kullanıcı vardır
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
     public static double getBalance(String tc) {
         double balance = 0.0;
         try (Connection conn = connect();
