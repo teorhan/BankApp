@@ -2,6 +2,7 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import javafx.scene.image.Image;
 
 public class MainApp extends Application {
 
@@ -11,6 +12,10 @@ public class MainApp extends Application {
         Scene scene = new Scene(loader.load());
         stage.setScene(scene);
         stage.setTitle("FidanBank Giriş");
+
+        // 💡 LOGOYU BURADA EKLİYORUZ
+        stage.getIcons().add(new Image(getClass().getResourceAsStream("/images/fidan.png")));
+
         stage.show();
     }
 
