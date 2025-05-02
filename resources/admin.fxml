@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane xmlns:fx="http://javafx.com/fxml" fx:controller="AdminController" prefWidth="600" prefHeight="400">
+
+    <Label text="FidanBank - Kullanıcı Yönetimi" layoutX="180" layoutY="20" style="-fx-font-size: 18px;" />
+
+    <TableView fx:id="userTable" layoutX="50" layoutY="60" prefWidth="500" prefHeight="300">
+        <columns>
+            <TableColumn fx:id="tcColumn" text="TC" prefWidth="200" />
+            <TableColumn fx:id="actionColumn" text="İşlemler" prefWidth="280" />
+        </columns>
+    </TableView>
+
+</AnchorPane>

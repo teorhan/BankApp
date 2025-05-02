@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
+            fx:controller="HistoryController"
+            prefWidth="600" prefHeight="400">
+
+    <Label text="İşlem Geçmişi" layoutX="240" layoutY="20" style="-fx-font-size: 18px;"/>
+
+    <TableView fx:id="historyTable" layoutX="20" layoutY="60" prefWidth="560" prefHeight="320">
+        <columns>
+            <TableColumn fx:id="typeCol" text="İşlem Türü" prefWidth="150"/>
+            <TableColumn fx:id="amountCol" text="Tutar (₺)" prefWidth="100"/>
+            <TableColumn fx:id="targetCol" text="Hedef TC" prefWidth="150"/>
+            <TableColumn fx:id="timeCol" text="Tarih" prefWidth="160"/>
+        </columns>
+    </TableView>
+</AnchorPane>

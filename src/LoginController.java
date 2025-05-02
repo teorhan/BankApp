@@ -14,8 +14,10 @@ public class LoginController {
 
     @FXML
     private TextField usernameField;
+
     @FXML
     private PasswordField passwordField;
+
     @FXML
     private Label errorLabel;
 
@@ -26,6 +28,12 @@ public class LoginController {
 
         if (tc.isEmpty() || password.isEmpty()) {
             errorLabel.setText("TC ve şifre boş olamaz.");
+            return;
+        }
+
+        // Admin kontrolü doğrudan yapılır
+        if (tc.equals("admin") && password.equals("admin")) {
+            openAdminDashboard(tc);
             return;
         }
 
@@ -40,7 +48,7 @@ public class LoginController {
             ResultSet rs = stmt.executeQuery();
 
             if (rs.next()) {
-                openDashboard(tc); // TC bilgisini gönder
+                openDashboard(tc);
             } else {
                 errorLabel.setText("Hatalı TC veya şifre.");
             }
@@ -56,13 +64,29 @@ public class LoginController {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/dashboard.fxml"));
             Scene scene = new Scene(loader.load());
 
-            // Controller'a TC bilgisini aktar
             DashboardController controller = loader.getController();
             controller.setUserTc(tc);
 
             Stage stage = (Stage) usernameField.getScene().getWindow();
             stage.setScene(scene);
             stage.setTitle("FidanBank Dashboard");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void openAdminDashboard(String tc) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/admin.fxml"));
+            Scene scene = new Scene(loader.load());
+
+            AdminController controller = loader.getController();
+            controller.setAdmin(new Admin(tc, null));
+
+            Stage stage = (Stage) usernameField.getScene().getWindow();
+            stage.setScene(scene);
+            stage.setTitle("FidanBank - Admin Paneli");
 
         } catch (Exception e) {
             e.printStackTrace();
