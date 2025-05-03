@@ -31,12 +31,14 @@ public class LoginController {
             return;
         }
 
-        // Admin kontrolü doğrudan yapılır
+        // Admin özel durumu kontrol edilmeye devam ediliyor
         if (tc.equals("admin") && password.equals("admin")) {
-            openAdminDashboard(tc);
+            User admin = UserFactory.createUser(tc, password);
+            openAdminDashboard((Admin) admin);
             return;
         }
 
+        // Veritabanında kullanıcı kontrolü
         String sql = "SELECT * FROM users WHERE tc = ? AND password = ?";
 
         try (Connection conn = DatabaseHelper.connect();
@@ -44,11 +46,15 @@ public class LoginController {
 
             stmt.setString(1, tc);
             stmt.setString(2, password);
-
             ResultSet rs = stmt.executeQuery();
 
             if (rs.next()) {
-                openDashboard(tc);
+                User user = UserFactory.createUser(tc, password);
+                if (user instanceof Customer) {
+                    openDashboard((Customer) user);
+                } else {
+                    errorLabel.setText("Geçersiz kullanıcı rolü.");
+                }
             } else {
                 errorLabel.setText("Hatalı TC veya şifre.");
             }
@@ -59,13 +65,13 @@ public class LoginController {
         }
     }
 
-    private void openDashboard(String tc) {
+    private void openDashboard(Customer customer) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/dashboard.fxml"));
             Scene scene = new Scene(loader.load());
 
             DashboardController controller = loader.getController();
-            controller.setUserTc(tc);
+            controller.setUserTc(customer.getTc());
 
             Stage stage = (Stage) usernameField.getScene().getWindow();
             stage.setScene(scene);
@@ -76,13 +82,13 @@ public class LoginController {
         }
     }
 
-    private void openAdminDashboard(String tc) {
+    private void openAdminDashboard(Admin admin) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/admin.fxml"));
             Scene scene = new Scene(loader.load());
 
             AdminController controller = loader.getController();
-            controller.setAdmin(new Admin(tc, null));
+            controller.setAdmin(admin);
 
             Stage stage = (Stage) usernameField.getScene().getWindow();
             stage.setScene(scene);
@@ -108,6 +114,17 @@ public class LoginController {
             stage.setTitle("FidanBank - Hesap Oluştur");
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    // 🔽 Inner Factory Class
+    private static class UserFactory {
+        public static User createUser(String tc, String password) {
+            if ("admin".equals(tc)) {
+                return new Admin(tc, password);
+            } else {
+                return new Customer(tc, password);
+            }
         }
     }
 }

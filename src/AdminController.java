@@ -1,8 +1,11 @@
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -110,4 +113,17 @@ public class AdminController {
             e.printStackTrace();
         }
     }
+    @FXML
+    private void handleLogout() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/login.fxml"));
+            Scene scene = new Scene(loader.load());
+            Stage stage = (Stage) userTable.getScene().getWindow();
+            stage.setScene(scene);
+            stage.setTitle("FidanBank Giriş");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 }

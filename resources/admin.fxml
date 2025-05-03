@@ -13,5 +13,6 @@
             <TableColumn fx:id="actionColumn" text="İşlemler" prefWidth="280" />
         </columns>
     </TableView>
+    <Button text="Çıkış Yap" onAction="#handleLogout" />
 
 </AnchorPane>
