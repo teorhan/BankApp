@@ -1,140 +1,146 @@
 import javafx.fxml.FXML;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
+import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import javafx.scene.layout.*;
+import javafx.scene.control.*;
+
 
 public class DashboardController {
 
-    @FXML
-    private Label balanceLabel;
-
-    @FXML
-    private TextField amountField;
-
-    @FXML
-    private TextField targetTcField;
-
-    @FXML
-    private TextField transferAmountField;
-
-    @FXML
-    private Label transferInfoLabel;
+    @FXML private BorderPane rootPane;
+    @FXML private VBox sidebar;
+    @FXML private StackPane contentArea;
+    @FXML private Button menuButton;
 
     private Customer currentCustomer;
 
     public void setUserTc(String tc) {
         this.currentCustomer = new Customer(tc, null);
-        updateBalanceLabel();
+        showBalanceView();
     }
 
     @FXML
-    private void initialize() {
-        // initialize içinde işlem yapılmaz çünkü setUserTc() sonradan çağrılır
+    private void toggleSidebar() {
+        sidebar.setVisible(!sidebar.isVisible());
     }
 
     @FXML
-    private void handleDeposit() {
-        try {
-            double amount = Double.parseDouble(amountField.getText());
-            if (amount <= 0) {
-                System.out.println("Geçerli bir tutar giriniz.");
-                return;
-            }
-            currentCustomer.deposit(amount);
-            updateBalanceLabel();
-        } catch (NumberFormatException e) {
-            System.out.println("Lütfen sayısal bir tutar girin!");
-        }
+    private void showBalanceView() {
+        Label label = new Label("Bakiyeniz: ₺" + DatabaseHelper.getBalance(currentCustomer.getTc()));
+        label.setStyle("-fx-font-size: 24px; -fx-text-fill: #1B5E20; -fx-font-weight: bold;");
+
+        VBox box = new VBox(label);
+        box.setStyle("-fx-background-color: white; -fx-padding: 30; -fx-alignment: center;");
+
+        contentArea.getChildren().setAll(box);
     }
 
     @FXML
-    private void handleWithdraw() {
-        try {
-            double amount = Double.parseDouble(amountField.getText());
-            if (amount <= 0) {
-                System.out.println("Geçerli bir tutar giriniz.");
-                return;
+    private void showDepositWithdrawView() {
+        VBox layout = new VBox(15);
+        layout.setStyle("-fx-background-color: white; -fx-padding: 30; -fx-alignment: center;");
+
+        Label title = new Label("Para İşlemleri");
+        title.setStyle("-fx-text-fill: #1B5E20; -fx-font-size: 24px; -fx-font-weight: bold;");
+
+        TextField amountField = new TextField();
+        amountField.setPromptText("Tutar (₺)");
+        amountField.setStyle("-fx-background-radius: 10; -fx-border-radius: 10; -fx-font-size: 14px; -fx-padding: 10; -fx-background-color: #1B5E20; -fx-text-fill: white; -fx-pref-width: 250;");
+
+        Button depositBtn = new Button("Yatır");
+        depositBtn.setStyle("-fx-background-color: #1B5E20; -fx-text-fill: white; -fx-font-size: 14px; -fx-background-radius: 10; -fx-cursor: hand; -fx-padding: 8 16;");
+
+        Button withdrawBtn = new Button("Çek");
+        withdrawBtn.setStyle("-fx-background-color: #1B5E20; -fx-text-fill: white; -fx-font-size: 14px; -fx-background-radius: 10; -fx-cursor: hand; -fx-padding: 8 16;");
+
+        Label info = new Label();
+        info.setStyle("-fx-text-fill: #1B5E20; -fx-font-size: 12px;");
+
+        depositBtn.setOnAction(e -> {
+            try {
+                double amount = Double.parseDouble(amountField.getText());
+                currentCustomer.deposit(amount);
+                showBalanceView();
+            } catch (Exception ex) {
+                info.setText("❌ Geçerli bir tutar girin!");
             }
-            currentCustomer.withdraw(amount);
-            updateBalanceLabel();
-        } catch (NumberFormatException e) {
-            System.out.println("Lütfen sayısal bir tutar girin!");
-        }
+        });
+
+        withdrawBtn.setOnAction(e -> {
+            try {
+                double amount = Double.parseDouble(amountField.getText());
+                currentCustomer.withdraw(amount);
+                showBalanceView();
+            } catch (Exception ex) {
+                info.setText("❌ Geçerli bir tutar girin!");
+            }
+        });
+
+        HBox buttons = new HBox(10, depositBtn, withdrawBtn);
+        buttons.setStyle("-fx-alignment: center;");
+
+        layout.getChildren().addAll(title, amountField, buttons, info);
+        contentArea.getChildren().setAll(layout);
     }
 
     @FXML
-    private void handleLogout() {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/login.fxml"));
-            Scene scene = new Scene(loader.load());
-            Stage stage = (Stage) balanceLabel.getScene().getWindow();
-            stage.setScene(scene);
-            stage.setTitle("Banka Girişi");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    private void showTransferView() {
+        VBox layout = new VBox(15);
+        layout.setStyle("-fx-background-color: white; -fx-padding: 30; -fx-alignment: center;");
+
+        Label title = new Label("Para Gönder");
+        title.setStyle("-fx-text-fill: #1B5E20; -fx-font-size: 24px; -fx-font-weight: bold;");
+
+        TextField targetField = new TextField();
+        targetField.setPromptText("Alıcı TC");
+        targetField.setStyle("-fx-background-radius: 10; -fx-border-radius: 10; -fx-font-size: 14px; -fx-padding: 10; -fx-background-color: #1B5E20; -fx-text-fill: white; -fx-pref-width: 250;");
+
+        TextField amountField = new TextField();
+        amountField.setPromptText("Gönderilecek Tutar (₺)");
+        amountField.setStyle("-fx-background-radius: 10; -fx-border-radius: 10; -fx-font-size: 14px; -fx-padding: 10; -fx-background-color: #1B5E20; -fx-text-fill: white; -fx-pref-width: 250;");
+
+        Button sendBtn = new Button("Gönder");
+        sendBtn.setStyle("-fx-background-color: #1B5E20; -fx-text-fill: white; -fx-font-size: 14px; -fx-background-radius: 10; -fx-cursor: hand; -fx-padding: 8 16;");
+
+        Label info = new Label();
+        info.setStyle("-fx-text-fill: #1B5E20; -fx-font-size: 12px;");
+
+        sendBtn.setOnAction(e -> {
+            String targetTc = targetField.getText().trim();
+            try {
+                double amount = Double.parseDouble(amountField.getText());
+                double current = DatabaseHelper.getBalance(currentCustomer.getTc());
+                if (DatabaseHelper.userExists(targetTc) && !targetTc.equals(currentCustomer.getTc()) && current >= amount) {
+                    DatabaseHelper.updateBalance(currentCustomer.getTc(), current - amount);
+                    DatabaseHelper.updateBalance(targetTc, DatabaseHelper.getBalance(targetTc) + amount);
+                    DatabaseHelper.logTransaction(currentCustomer.getTc(), "Transfer (gönderici)", amount, targetTc);
+                    DatabaseHelper.logTransaction(targetTc, "Transfer (alıcı)", amount, currentCustomer.getTc());
+                    info.setText("✅ Transfer başarılı!");
+                    showBalanceView();
+                } else {
+                    info.setText("❌ Geçersiz işlem.");
+                }
+            } catch (Exception ex) {
+                info.setText("❌ Geçerli bir tutar girin.");
+            }
+        });
+
+        layout.getChildren().addAll(title, targetField, amountField, sendBtn, info);
+        contentArea.getChildren().setAll(layout);
     }
 
-    @FXML
-    private void handleTransfer() {
-        String targetTc = targetTcField.getText().trim();
-        String amountStr = transferAmountField.getText().trim();
 
-        if (targetTc.isEmpty() || amountStr.isEmpty()) {
-            transferInfoLabel.setText("Lütfen tüm alanları doldurun.");
-            return;
-        }
-
-        if (targetTc.equals(currentCustomer.getTc())) {
-            transferInfoLabel.setText("Kendi hesabınıza para gönderemezsiniz.");
-            return;
-        }
-
-        try {
-            double amount = Double.parseDouble(amountStr);
-            double currentBalance = DatabaseHelper.getBalance(currentCustomer.getTc());
-
-            if (amount <= 0) {
-                transferInfoLabel.setText("Geçerli bir tutar girin.");
-                return;
-            }
-
-            // Alıcı TC kontrolü
-            double targetBalance = DatabaseHelper.getBalance(targetTc);
-            if (targetBalance == 0.0 && !DatabaseHelper.userExists(targetTc)) {
-                transferInfoLabel.setText("Alıcı TC bulunamadı!");
-                return;
-            }
-
-            if (currentBalance < amount) {
-                transferInfoLabel.setText("Yetersiz bakiye.");
-                return;
-            }
-
-            // Para transferi
-            DatabaseHelper.updateBalance(currentCustomer.getTc(), currentBalance - amount);
-            DatabaseHelper.updateBalance(targetTc, targetBalance + amount);
-
-            // ✅ İşlem geçmişine ekle
-            DatabaseHelper.logTransaction(currentCustomer.getTc(), "Transfer (gönderici)", amount, targetTc);
-            DatabaseHelper.logTransaction(targetTc, "Transfer (alıcı)", amount, currentCustomer.getTc());
-
-            transferInfoLabel.setText("Transfer başarılı!");
-            updateBalanceLabel();
-
-        } catch (NumberFormatException e) {
-            transferInfoLabel.setText("Sayısal bir tutar girin!");
-        }
-    }
 
     @FXML
     private void handleShowHistory() {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/history.fxml"));
             Scene scene = new Scene(loader.load());
-
             HistoryController controller = loader.getController();
             controller.setTc(currentCustomer.getTc());
 
@@ -147,8 +153,16 @@ public class DashboardController {
         }
     }
 
-    private void updateBalanceLabel() {
-        double balance = DatabaseHelper.getBalance(currentCustomer.getTc());
-        balanceLabel.setText("₺" + balance);
+    @FXML
+    private void handleLogout() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/login.fxml"));
+            Scene scene = new Scene(loader.load());
+            Stage stage = (Stage) rootPane.getScene().getWindow();
+            stage.setScene(scene);
+            stage.setTitle("FidanBank Giriş");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

@@ -67,7 +67,7 @@ public class LoginController {
 
     private void openDashboard(Customer customer) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/dashboard.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/DashboardLayout.fxml"));
             Scene scene = new Scene(loader.load());
 
             DashboardController controller = loader.getController();
@@ -76,7 +76,6 @@ public class LoginController {
             Stage stage = (Stage) usernameField.getScene().getWindow();
             stage.setScene(scene);
             stage.setTitle("FidanBank Dashboard");
-
         } catch (Exception e) {
             e.printStackTrace();
         }
