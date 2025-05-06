@@ -25,9 +25,17 @@ public class DashboardController {
     }
 
     @FXML
+
     private void toggleSidebar() {
-        sidebar.setVisible(!sidebar.isVisible());
+        boolean isVisible = sidebar.isVisible();
+        sidebar.setVisible(!isVisible);
+        sidebar.setManaged(!isVisible); // ← BU ÖNEMLİ
     }
+    private void hideSidebar() {
+        sidebar.setVisible(false);
+        sidebar.setManaged(false);
+    }
+
 
     @FXML
     private void showBalanceView() {
@@ -38,6 +46,7 @@ public class DashboardController {
         box.setStyle("-fx-background-color: white; -fx-padding: 30; -fx-alignment: center;");
 
         contentArea.getChildren().setAll(box);
+        hideSidebar();
     }
 
     @FXML
@@ -86,6 +95,7 @@ public class DashboardController {
 
         layout.getChildren().addAll(title, amountField, buttons, info);
         contentArea.getChildren().setAll(layout);
+        hideSidebar();
     }
 
     @FXML
@@ -132,6 +142,7 @@ public class DashboardController {
 
         layout.getChildren().addAll(title, targetField, amountField, sendBtn, info);
         contentArea.getChildren().setAll(layout);
+        hideSidebar();
     }
 
 
