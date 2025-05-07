@@ -16,21 +16,41 @@ public class DatabaseHelper {
 
     // users tablosunu oluştur (seriNo kaldırıldı)
     public static void createUsersTable() {
-        String sql = "CREATE TABLE IF NOT EXISTS users ("
-                + "id INTEGER PRIMARY KEY AUTOINCREMENT,"
-                + "tc TEXT NOT NULL UNIQUE,"
-                + "password TEXT NOT NULL,"
-                + "balance REAL DEFAULT 0.0"
-                + ");";
+        String sql = "CREATE TABLE IF NOT EXISTS users (" +
+                "id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                "tc TEXT NOT NULL UNIQUE," +
+                "password TEXT NOT NULL," +
+                "balance REAL DEFAULT 0.0" +
+                ");";
 
         try (Connection conn = connect();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.execute();
             System.out.println("✅ Kullanıcı tablosu oluşturuldu veya zaten mevcut.");
+
+            // Altın sütununu varsa ekleme
+            addGoldColumnIfMissing();
+
         } catch (SQLException e) {
             System.out.println("❌ Tablo oluşturulamadı: " + e.getMessage());
         }
     }
+
+    private static void addGoldColumnIfMissing() {
+        try (Connection conn = connect();
+             PreparedStatement ps = conn.prepareStatement("ALTER TABLE users ADD COLUMN gold REAL DEFAULT 0.0")) {
+            ps.execute();
+            System.out.println("✅ 'gold' sütunu başarıyla eklendi.");
+        } catch (SQLException e) {
+            if (e.getMessage().contains("duplicate column name") || e.getMessage().contains("already exists")) {
+                System.out.println("ℹ️ 'gold' sütunu zaten mevcut.");
+            } else {
+                System.out.println("❌ 'gold' sütunu eklenemedi: " + e.getMessage());
+            }
+        }
+    }
+
+
 
     public static boolean userExists(String tc) {
         try (Connection conn = connect();
@@ -69,6 +89,31 @@ public class DatabaseHelper {
             e.printStackTrace();
         }
     }
+    public static double getGold(String tc) {
+        try (Connection conn = connect();
+             PreparedStatement ps = conn.prepareStatement("SELECT gold FROM users WHERE tc = ?")) {
+            ps.setString(1, tc);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getDouble("gold");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return 0.0;
+    }
+
+    public static void updateGold(String tc, double newGoldAmount) {
+        try (Connection conn = connect();
+             PreparedStatement ps = conn.prepareStatement("UPDATE users SET gold = ? WHERE tc = ?")) {
+            ps.setDouble(1, newGoldAmount);
+            ps.setString(2, tc);
+            ps.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public static void createTransactionsTable() {
         String sql = "CREATE TABLE IF NOT EXISTS transactions ("
                 + "id INTEGER PRIMARY KEY AUTOINCREMENT,"

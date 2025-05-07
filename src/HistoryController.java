@@ -4,6 +4,7 @@ import javafx.scene.control.TableColumn;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.control.TableCell;
 
 import java.sql.*;
 
@@ -38,18 +39,60 @@ public class HistoryController {
             ResultSet rs = ps.executeQuery();
 
             while (rs.next()) {
-                data.add(new TransactionModel(
-                        rs.getString("type"),
-                        rs.getDouble("amount"),
-                        rs.getString("target_tc"),
-                        rs.getString("timestamp")
-                ));
+                String type = rs.getString("type");
+                String target = rs.getString("target_tc");
+                double amount = rs.getDouble("amount");
+                String timestamp = rs.getString("timestamp");
+
+                // 🔍 Altın işlemi kontrolü
+                if (type.contains("Altın")) {
+                    String islem = type.contains("Alım") ? "Altın Alım" : "Altın Satım";
+
+                    // İşlem türüne göre sabit fiyat belirle
+                    double altinFiyat = type.contains("Alım") ? 4205.16 : 4205.64;
+
+                    // Tutar / birim fiyat => kaç gram alındı/satıldı
+                    double gramMiktari = amount / altinFiyat;
+
+                    // Yeni gösterim
+                    type = String.format("%s (%.2f gr)", islem, gramMiktari);
+                    target = "-";
+                }
+
+
+
+
+
+                data.add(new TransactionModel(type, amount, target, timestamp));
             }
 
             typeCol.setCellValueFactory(new PropertyValueFactory<>("type"));
             amountCol.setCellValueFactory(new PropertyValueFactory<>("amount"));
             targetCol.setCellValueFactory(new PropertyValueFactory<>("targetTc"));
             timeCol.setCellValueFactory(new PropertyValueFactory<>("timestamp"));
+
+            // 🔸 Stil farkı eklemek isteyenler için (isteğe bağlı):
+            typeCol.setCellFactory(column -> new TableCell<>() {
+                @Override
+                protected void updateItem(String item, boolean empty) {
+                    super.updateItem(item, empty);
+                    if (empty || item == null) {
+                        setText(null);
+                        setStyle("");
+                    } else {
+                        setText(item);
+                        if (item.contains("Altın Alım")) {
+                            setStyle("-fx-text-fill: goldenrod;");
+                        } else if (item.contains("Altın Satım")) {
+                            setStyle("-fx-text-fill: crimson;");
+                        } else if (item.contains("Transfer")) {
+                            setStyle("-fx-text-fill: steelblue;");
+                        } else {
+                            setStyle("-fx-text-fill: black;");
+                        }
+                    }
+                }
+            });
 
             historyTable.setItems(data);
 

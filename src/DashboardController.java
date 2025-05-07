@@ -39,20 +39,34 @@ public class DashboardController {
 
     @FXML
     private void showBalanceView() {
-        Label label = new Label("Bakiyeniz: ₺" + DatabaseHelper.getBalance(currentCustomer.getTc()));
-        label.setStyle("-fx-font-size: 24px; -fx-text-fill: #1B5E20; -fx-font-weight: bold;");
+        double balance = DatabaseHelper.getBalance(currentCustomer.getTc());
+        double gold = DatabaseHelper.getGold(currentCustomer.getTc());
 
-        VBox box = new VBox(label);
+        Label balanceLabel = new Label(String.format("Bakiyeniz: ₺%.2f", balance));
+
+        balanceLabel.setStyle("-fx-font-size: 24px; -fx-text-fill: #1B5E20; -fx-font-weight: bold;");
+
+        Label goldLabel = new Label("Altın Miktarınız: " + String.format("%.2f", gold) + " gr");
+        goldLabel.setStyle("-fx-font-size: 18px; -fx-text-fill: #1B5E20; -fx-font-weight: bold;");
+
+        VBox box = new VBox(10, balanceLabel, goldLabel);
         box.setStyle("-fx-background-color: white; -fx-padding: 30; -fx-alignment: center;");
 
         contentArea.getChildren().setAll(box);
         hideSidebar();
     }
 
+
     @FXML
     private void showDepositWithdrawView() {
         VBox layout = new VBox(15);
         layout.setStyle("-fx-background-color: white; -fx-padding: 30; -fx-alignment: center;");
+
+        double balance = DatabaseHelper.getBalance(currentCustomer.getTc());
+
+        // ✅ Güncel bakiye etiketi
+        Label balanceLabel = new Label(String.format("Mevcut Bakiye: ₺%.2f", balance));
+        balanceLabel.setStyle("-fx-font-size: 18px; -fx-text-fill: #1B5E20; -fx-font-weight: bold;");
 
         Label title = new Label("Para İşlemleri");
         title.setStyle("-fx-text-fill: #1B5E20; -fx-font-size: 24px; -fx-font-weight: bold;");
@@ -74,7 +88,10 @@ public class DashboardController {
             try {
                 double amount = Double.parseDouble(amountField.getText());
                 currentCustomer.deposit(amount);
-                showBalanceView();
+
+                double updatedBalance = DatabaseHelper.getBalance(currentCustomer.getTc());
+                balanceLabel.setText(String.format("Mevcut Bakiye: ₺%.2f", updatedBalance)); // ✅ güncelle
+                info.setText("✅ Para yatırıldı.");
             } catch (Exception ex) {
                 info.setText("❌ Geçerli bir tutar girin!");
             }
@@ -84,16 +101,20 @@ public class DashboardController {
             try {
                 double amount = Double.parseDouble(amountField.getText());
                 currentCustomer.withdraw(amount);
-                showBalanceView();
+
+                double updatedBalance = DatabaseHelper.getBalance(currentCustomer.getTc());
+                balanceLabel.setText(String.format("Mevcut Bakiye: ₺%.2f", updatedBalance)); // ✅ güncelle
+                info.setText("✅ Para çekildi.");
             } catch (Exception ex) {
                 info.setText("❌ Geçerli bir tutar girin!");
             }
         });
 
+
         HBox buttons = new HBox(10, depositBtn, withdrawBtn);
         buttons.setStyle("-fx-alignment: center;");
 
-        layout.getChildren().addAll(title, amountField, buttons, info);
+        layout.getChildren().addAll(balanceLabel, title, amountField, buttons, info);
         contentArea.getChildren().setAll(layout);
         hideSidebar();
     }
@@ -102,6 +123,12 @@ public class DashboardController {
     private void showTransferView() {
         VBox layout = new VBox(15);
         layout.setStyle("-fx-background-color: white; -fx-padding: 30; -fx-alignment: center;");
+
+        double balance = DatabaseHelper.getBalance(currentCustomer.getTc());
+
+        // ✅ Güncel bakiye etiketi
+        Label balanceLabel = new Label(String.format("Mevcut Bakiye: ₺%.2f", balance));
+        balanceLabel.setStyle("-fx-font-size: 18px; -fx-text-fill: #1B5E20; -fx-font-weight: bold;");
 
         Label title = new Label("Para Gönder");
         title.setStyle("-fx-text-fill: #1B5E20; -fx-font-size: 24px; -fx-font-weight: bold;");
@@ -125,13 +152,16 @@ public class DashboardController {
             try {
                 double amount = Double.parseDouble(amountField.getText());
                 double current = DatabaseHelper.getBalance(currentCustomer.getTc());
+
                 if (DatabaseHelper.userExists(targetTc) && !targetTc.equals(currentCustomer.getTc()) && current >= amount) {
                     DatabaseHelper.updateBalance(currentCustomer.getTc(), current - amount);
                     DatabaseHelper.updateBalance(targetTc, DatabaseHelper.getBalance(targetTc) + amount);
                     DatabaseHelper.logTransaction(currentCustomer.getTc(), "Transfer (gönderici)", amount, targetTc);
                     DatabaseHelper.logTransaction(targetTc, "Transfer (alıcı)", amount, currentCustomer.getTc());
+
+                    double updatedBalance = DatabaseHelper.getBalance(currentCustomer.getTc());
+                    balanceLabel.setText(String.format("Mevcut Bakiye: ₺%.2f", updatedBalance)); // ✅ güncelle
                     info.setText("✅ Transfer başarılı!");
-                    showBalanceView();
                 } else {
                     info.setText("❌ Geçersiz işlem.");
                 }
@@ -140,7 +170,84 @@ public class DashboardController {
             }
         });
 
-        layout.getChildren().addAll(title, targetField, amountField, sendBtn, info);
+
+        layout.getChildren().addAll(balanceLabel, title, targetField, amountField, sendBtn, info);
+        contentArea.getChildren().setAll(layout);
+        hideSidebar();
+    }
+
+
+    @FXML
+    private void showGoldTradeView() {
+        VBox layout = new VBox(15);
+        layout.setStyle("-fx-background-color: white; -fx-padding: 30; -fx-alignment: center;");
+
+        double balance = DatabaseHelper.getBalance(currentCustomer.getTc());
+        double gold = DatabaseHelper.getGold(currentCustomer.getTc());
+
+        double alisFiyat = GoldRateFetcher.getGramAltinAlis();
+        double satisFiyat = GoldRateFetcher.getGramAltinSatis();
+
+        Label balanceLabel = new Label(String.format("Bakiyeniz: ₺%.2f", balance));
+        balanceLabel.setStyle("-fx-font-size: 18px; -fx-text-fill: #1B5E20; -fx-font-weight: bold;");
+
+        Label goldLabel = new Label("Mevcut Gram Altın: " + gold + " gr");
+        goldLabel.setStyle("-fx-font-size: 18px; -fx-text-fill: #1B5E20; -fx-font-weight: bold;");
+
+        Label fiyatLabel = new Label("Alış: ₺" + alisFiyat + "   Satış: ₺" + satisFiyat);
+        fiyatLabel.setStyle("-fx-font-size: 14px; -fx-text-fill: #1B5E20;");
+
+        TextField gramField = new TextField();
+        gramField.setPromptText("Alınacak/Satılacak Gram");
+        gramField.setStyle("-fx-background-color: #1B5E20; -fx-text-fill: white; -fx-background-radius: 10; -fx-font-size: 14px; -fx-pref-width: 250;");
+
+        Button buyBtn = new Button("Altın Al");
+        buyBtn.setStyle("-fx-background-color: #1B5E20; -fx-text-fill: white; -fx-font-size: 14px; -fx-background-radius: 10;");
+
+        Button sellBtn = new Button("Altın Sat");
+        sellBtn.setStyle("-fx-background-color: #1B5E20; -fx-text-fill: white; -fx-font-size: 14px; -fx-background-radius: 10;");
+
+        Label resultLabel = new Label();
+        resultLabel.setStyle("-fx-text-fill: #1B5E20; -fx-font-size: 12px;");
+
+        buyBtn.setOnAction(e -> {
+            try {
+                double miktar = Double.parseDouble(gramField.getText());
+                double toplamTutar = miktar * alisFiyat;
+
+                if (balance >= toplamTutar) {
+                    DatabaseHelper.updateBalance(currentCustomer.getTc(), balance - toplamTutar);
+                    DatabaseHelper.updateGold(currentCustomer.getTc(), gold + miktar);
+                    DatabaseHelper.logTransaction(currentCustomer.getTc(), "Altın Alım", toplamTutar, "Gram: " + miktar);
+                    resultLabel.setText("✅ " + miktar + " gr altın alındı.");
+                    showGoldTradeView(); // ekranı güncelle
+                } else {
+                    resultLabel.setText("❌ Yetersiz bakiye.");
+                }
+            } catch (Exception ex) {
+                resultLabel.setText("❌ Geçerli bir gram girin.");
+            }
+        });
+
+        sellBtn.setOnAction(e -> {
+            try {
+                double miktar = Double.parseDouble(gramField.getText());
+                if (gold >= miktar) {
+                    double gelir = miktar * satisFiyat;
+                    DatabaseHelper.updateBalance(currentCustomer.getTc(), balance + gelir);
+                    DatabaseHelper.updateGold(currentCustomer.getTc(), gold - miktar);
+                    DatabaseHelper.logTransaction(currentCustomer.getTc(), "Altın Satım", gelir, "Gram: " + miktar);
+                    resultLabel.setText("✅ " + miktar + " gr altın satıldı.");
+                    showGoldTradeView(); // ekranı güncelle
+                } else {
+                    resultLabel.setText("❌ Yetersiz gram altın.");
+                }
+            } catch (Exception ex) {
+                resultLabel.setText("❌ Geçerli bir gram girin.");
+            }
+        });
+
+        layout.getChildren().addAll(balanceLabel, goldLabel, fiyatLabel, gramField, buyBtn, sellBtn, resultLabel);
         contentArea.getChildren().setAll(layout);
         hideSidebar();
     }
