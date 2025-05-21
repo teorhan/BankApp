@@ -1,20 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
-            fx:controller="HistoryController"
-            prefWidth="600" prefHeight="400">
+<AnchorPane prefHeight="400" prefWidth="600" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="HistoryController">
 
-    <Label text="İşlem Geçmişi" layoutX="240" layoutY="20" style="-fx-font-size: 18px;"/>
+    <Label layoutX="240" layoutY="20" style="-fx-font-size: 18px;" text="İşlem Geçmişi" />
 
-    <TableView fx:id="historyTable" layoutX="20" layoutY="60" prefWidth="560" prefHeight="320">
+    <TableView fx:id="historyTable" layoutX="20" layoutY="60" prefHeight="320" prefWidth="560">
         <columns>
-            <TableColumn fx:id="typeCol" text="İşlem Türü" prefWidth="150"/>
-            <TableColumn fx:id="amountCol" text="Tutar (₺)" prefWidth="100"/>
-            <TableColumn fx:id="targetCol" text="Hedef TC" prefWidth="150"/>
-            <TableColumn fx:id="timeCol" text="Tarih" prefWidth="160"/>
+            <TableColumn fx:id="typeCol" prefWidth="126.4000244140625" text="İşlem Türü" />
+            <TableColumn fx:id="amountCol" prefWidth="88.79998779296875" text="Tutar (₺)" />
+            <TableColumn fx:id="gramCol" prefWidth="92.00006103515625" text="Gram (gr)" />
+            <TableColumn fx:id="targetCol" prefWidth="103.2000732421875" text="Hedef TC" />
+            <TableColumn fx:id="timeCol" prefWidth="152.0" text="Tarih" />
         </columns>
     </TableView>
 </AnchorPane>

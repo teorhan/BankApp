@@ -7,15 +7,15 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane fx:id="rootPane" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/23.0.1" fx:controller="DashboardController">
+<BorderPane fx:id="rootPane" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="DashboardController">
     <top>
-        <ToolBar style="-fx-background-color: linear-gradient(to right, #2E7D32, #1B5E20); -fx-padding: 10px;">
+        <ToolBar prefHeight="0.0" prefWidth="464.0" style="-fx-background-color: linear-gradient(to right, #2E7D32, #1B5E20); -fx-padding: 10px;">
             <Button fx:id="menuButton" onAction="#toggleSidebar" style="-fx-font-size: 18px; -fx-text-fill: white; -fx-background-color: transparent; -fx-border-color: white; -fx-border-radius: 5px; -fx-padding: 5 15;" text="☰" />
             <Label style="-fx-text-fill: white; -fx-font-size: 18px; -fx-font-weight: bold; -fx-padding: 0 0 0 10;" text="FidanBank" />
         </ToolBar>
     </top>
     <left>
-        <VBox fx:id="sidebar" spacing="15" style="-fx-background-color: #1B5E20; -fx-padding: 20;">
+        <VBox fx:id="sidebar" prefHeight="510.0" prefWidth="194.0" spacing="15" style="-fx-background-color: #1B5E20; -fx-padding: 20;">
             <Button onAction="#showBalanceView" style="-fx-background-color: white; -fx-text-fill: #1B5E20; -fx-font-size: 14px; -fx-background-radius: 8; -fx-cursor: hand; -fx-pref-width: 180px; -fx-padding: 10 20; -fx-font-weight: bold;" text="🏦 Bakiye" />
             <Button onAction="#showDepositWithdrawView" style="-fx-background-color: white; -fx-text-fill: #1B5E20; -fx-font-size: 14px; -fx-background-radius: 8; -fx-cursor: hand; -fx-pref-width: 180px; -fx-padding: 10 20; -fx-font-weight: bold;" text="💰 Para İşlemleri" />
             <Button onAction="#showTransferView" style="-fx-background-color: white; -fx-text-fill: #1B5E20; -fx-font-size: 14px; -fx-background-radius: 8; -fx-cursor: hand; -fx-pref-width: 180px; -fx-padding: 10 20; -fx-font-weight: bold;" text="🔁 Transfer" />
@@ -25,6 +25,6 @@
         </VBox>
     </left>
     <center>
-        <StackPane fx:id="contentArea" prefHeight="509.0" prefWidth="370.0" style="-fx-padding: 30; -fx-background-color: linear-gradient(to bottom right, #ffffff, #e8f5e9); -fx-border-radius: 8px; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.15), 10, 0, 0, 5); -fx-font-size: 14px;" />
+        <StackPane fx:id="contentArea" prefHeight="510.0" prefWidth="578.0" style="-fx-padding: 30; -fx-background-color: linear-gradient(to bottom right, #ffffff, #e8f5e9); -fx-border-radius: 8px; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.15), 10, 0, 0, 5); -fx-font-size: 14px;" />
     </center>
 </BorderPane>

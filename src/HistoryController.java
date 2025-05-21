@@ -5,6 +5,8 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.TableCell;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 import java.sql.*;
 
@@ -16,6 +18,9 @@ public class HistoryController {
     private TableColumn<TransactionModel, String> typeCol;
     @FXML
     private TableColumn<TransactionModel, Double> amountCol;
+    @FXML
+    private TableColumn<TransactionModel, String> gramCol;
+
     @FXML
     private TableColumn<TransactionModel, String> targetCol;
     @FXML
@@ -42,32 +47,36 @@ public class HistoryController {
                 String type = rs.getString("type");
                 String target = rs.getString("target_tc");
                 double amount = rs.getDouble("amount");
-                String timestamp = rs.getString("timestamp");
 
-                // 🔍 Altın işlemi kontrolü
-                if (type.contains("Altın")) {
-                    String islem = type.contains("Alım") ? "Altın Alım" : "Altın Satım";
+                String utcTimestamp = rs.getString("timestamp");
+                String formattedTimestamp = utcTimestamp;
 
-                    // İşlem türüne göre sabit fiyat belirle
-                    double altinFiyat = type.contains("Alım") ? 4205.16 : 4205.64;
-
-                    // Tutar / birim fiyat => kaç gram alındı/satıldı
-                    double gramMiktari = amount / altinFiyat;
-
-                    // Yeni gösterim
-                    type = String.format("%s (%.2f gr)", islem, gramMiktari);
-                    target = "-";
+                try {
+                    LocalDateTime utcTime = LocalDateTime.parse(utcTimestamp, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+                    LocalDateTime localTime = utcTime.plusHours(3); // 🔥 3 saat ileri al
+                    formattedTimestamp = localTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
 
 
 
+                String gram = "";
+
+                if (type.contains("Altın")) {
+                    gram = target;       // target = "Gram: 1.0"
+                    target = "-";        // hedef TC yok
+                }
+
+                data.add(new TransactionModel(type, amount, target, formattedTimestamp, gram));
 
 
-                data.add(new TransactionModel(type, amount, target, timestamp));
             }
 
             typeCol.setCellValueFactory(new PropertyValueFactory<>("type"));
             amountCol.setCellValueFactory(new PropertyValueFactory<>("amount"));
+            gramCol.setCellValueFactory(new PropertyValueFactory<>("gram"));
+
             targetCol.setCellValueFactory(new PropertyValueFactory<>("targetTc"));
             timeCol.setCellValueFactory(new PropertyValueFactory<>("timestamp"));
 
