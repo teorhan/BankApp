@@ -6,9 +6,7 @@ public abstract class User {
         this.tc = tc;
         this.password = password;
     }
-
     public abstract String getRole(); // Her alt sınıf kendine özel rol döndürsün
-
     public String getTc() {
         return tc;
     }

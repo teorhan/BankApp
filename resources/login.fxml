@@ -31,7 +31,7 @@
     </ImageView>
 
     <!-- Ana Başlık -->
-    <Label text="FidanBanka" textAlignment="CENTER"
+    <Label text="FidanBank" textAlignment="CENTER"
            style="-fx-font-size: 40px; -fx-text-fill: white; -fx-font-weight: bold;" />
 
     <!-- Hoşgeldiniz Mesajı -->
